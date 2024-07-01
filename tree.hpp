@@ -7,6 +7,7 @@ Email: nbashar4@gmail.com
 #define TREE_HPP
 
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <queue>
 #include <stack>
@@ -108,7 +109,7 @@ private:
         window.draw(circle);
 
         sf::Font font;
-        font.loadFromFile("/Library/Fonts/Arial Unicode.ttf");
+        font.loadFromFile("Arial.ttf");
         sf::Text text;
         text.setFont(font);
         text.setString(formatData(node->data));
