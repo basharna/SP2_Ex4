@@ -1,3 +1,8 @@
+
+# ID: 212487144
+# Email: nbashar4@gmail.com
+
+
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -O3 -g
 
@@ -9,7 +14,7 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 SRC = main.cpp complex.cpp
 OBJ = $(SRC:.cpp=.o)
-HEADERS = tree.hpp tree.tpp complex.hpp
+HEADERS = tree.hpp complex.hpp
 DEPS = $(HEADERS)
 EXEC = tree
 TEST_EXEC = test
@@ -21,6 +26,9 @@ $(EXEC): $(OBJ)
 
 $(TEST_EXEC): test.o $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(LIBS)
+
+valgrind: $(EXEC)
+	valgrind --leak-check=full ./$(EXEC)
 
 %.o: %.cpp $(DEPS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
