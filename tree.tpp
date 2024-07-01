@@ -1,10 +1,5 @@
 #include "tree.hpp"
 
-template <typename T, size_t K>
-void Tree<T, K>::add_root(T data)
-{
-    root = make_shared<Node>(data);
-}
 
 template <typename T, size_t K>
 void Tree<T, K>::add_sub_node(T parent, T child)
@@ -22,22 +17,29 @@ void Tree<T, K>::add_sub_node(T parent, T child)
 
         if (current->data == parent)
         {
-            for (size_t i = 0; i < K; i++)
+            if (current->children.size() < K)
             {
-                if (!current->children[i])
-                {
-                    current->children[i] = make_shared<Node>(child);
-                    return;
-                }
+                current->children.push_back(make_shared<Node>(child));
+                return;
+            }
+            else
+            {
+                return;
             }
         }
 
-        for (size_t i = 0; i < K; i++)
+        for (auto child : current->children)
         {
-            if (current->children[i])
-                q.push(current->children[i]);
+            q.push(child);
         }
     }
+}
+
+// getRoot
+template <typename T, size_t K>
+shared_ptr<typename Tree<T, K>::Node> Tree<T, K>::getRoot()
+{
+    return root;
 }
 
 template <typename T, size_t K>
@@ -61,13 +63,10 @@ void Tree<T, K>::print_tree()
         q.pop();
 
         cout << current->data << ": ";
-        for (size_t i = 0; i < K; i++)
+        for (auto child : current->children)
         {
-            if (current->children[i])
-            {
-                cout << current->children[i]->data << " ";
-                q.push(current->children[i]);
-            }
+            cout << child->data << " ";
+            q.push(child);
         }
         cout << endl;
     }
@@ -149,8 +148,16 @@ void Tree<T, K>::Iterator::pre_order(shared_ptr<Node> node)
     }
 
     tQueue.push(node);
-    pre_order(node->children[0]);
-    pre_order(node->children[1]);
+
+    if (node->children.empty())
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < node->children.size(); i++)
+    {
+        pre_order(node->children[i]);
+    }
 }
 
 template <typename T, size_t K>
@@ -161,8 +168,10 @@ void Tree<T, K>::Iterator::post_order(shared_ptr<Node> node)
         return;
     }
 
-    post_order(node->children[0]);
-    post_order(node->children[1]);
+    for (auto child : node->children)
+    {
+        post_order(child);
+    }
     tQueue.push(node);
 }
 
@@ -172,9 +181,11 @@ void Tree<T, K>::Iterator::in_order(shared_ptr<Node> node)
     if (!node)
         return;
 
-    in_order(node->children[0]);
+    if (node->children.size() > 0)
+        in_order(node->children[0]);
     tQueue.push(node);
-    in_order(node->children[1]);
+    if (node->children.size() > 1)
+        in_order(node->children[1]);
 }
 
 template <typename T, size_t K>
@@ -216,35 +227,6 @@ void Tree<T, K>::Iterator::dfs_scan(shared_ptr<Node> node)
     return;
 }
 
-template <typename T, size_t K>
-void Tree<T, K>::Iterator::init_pre_order()
-{
-    pre_order(current);
-}
-
-template <typename T, size_t K>
-void Tree<T, K>::Iterator::init_post_order()
-{
-    post_order(current);
-}
-
-template <typename T, size_t K>
-void Tree<T, K>::Iterator::init_in_order()
-{
-    in_order(current);
-}
-
-template <typename T, size_t K>
-void Tree<T, K>::Iterator::init_bfs_scan()
-{
-    bfs_scan(current);
-}
-
-template <typename T, size_t K>
-void Tree<T, K>::Iterator::init_dfs_scan()
-{
-    dfs_scan(current);
-}
 
 template <typename T, size_t K>
 shared_ptr<typename Tree<T, K>::Node> &Tree<T, K>::Iterator::get_current()
@@ -280,7 +262,9 @@ template <typename T, size_t K>
 typename Tree<T, K>::Iterator Tree<T, K>::end_pre_order()
 {
     if (K == 2)
+    {
         return Iterator(nullptr, "pre_order");
+    }
     else
         return Iterator(nullptr, "dfs_scan");
 }
@@ -377,10 +361,10 @@ typename Tree<T, K>::Iterator Tree<T, K>::myHeap()
     // transform the sorted vector into a minimum heap tree
     for (size_t i = 0; i < nodes.size(); i++)
     {
-        nodes[i]->children[0] = (2 * i + 1 < nodes.size()) ? nodes[2 * i + 1] : nullptr;
-        nodes[i]->children[1] = (2 * i + 2 < nodes.size()) ? nodes[2 * i + 2] : nullptr;
+        nodes[i]->children.clear();
+        nodes[i]->children.push_back((2 * i + 1 < nodes.size()) ? nodes[2 * i + 1] : nullptr);
+        nodes[i]->children.push_back((2 * i + 2 < nodes.size()) ? nodes[2 * i + 2] : nullptr);
     }
-
     root = nodes[0];
 
     return begin_bfs_scan();

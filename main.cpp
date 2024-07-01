@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include "tree.hpp"
+#include "complex.hpp"
 
 int main()
 {
@@ -12,6 +14,7 @@ int main()
     tree.add_sub_node(1.2, 1.5);
     tree.add_sub_node(1.3, 1.6);
 
+
     // The tree should look like:
     /**
      *         root = 1.1
@@ -21,11 +24,11 @@ int main()
      *    1.4  1.5   1.6
      */
 
-    tree.print_tree();
-
     cout << "Pre-order: ";
     for (auto it = tree.begin_pre_order(); it != tree.end_pre_order(); ++it)
+    {
         cout << *it << " ";
+    }
     cout << endl;
     // prints: 1.1, 1.2, 1.4, 1.5, 1.3, 1.6
 
@@ -57,11 +60,11 @@ int main()
     for (auto node : tree)
     {
         cout << node << " ";
-    } 
-    cout << endl; 
+    }
+    cout << endl;
     // same as BFS: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
 
-    Tree<double,3> three_ary_tree;
+    Tree<double, 3> three_ary_tree;
     three_ary_tree.add_root(1.1);
     three_ary_tree.add_sub_node(1.1, 1.2);
     three_ary_tree.add_sub_node(1.1, 1.3);
@@ -71,7 +74,7 @@ int main()
 
     three_ary_tree.print_tree();
 
-     // The tree should look like:
+    // The tree should look like:
     /**
      *       root = 1.1
      *     /      |     \
@@ -79,6 +82,22 @@ int main()
      *   /        |
      *  1.5      1.6
      */
+
+    Tree<Complex, 4> complex_tree;
+    complex_tree.add_root(Complex(1, 1));
+    complex_tree.add_sub_node(Complex(1, 1), Complex(2, 2));
+    complex_tree.add_sub_node(Complex(1, 1), Complex(3, 3));
+    complex_tree.add_sub_node(Complex(1, 1), Complex(4, 4));
+    complex_tree.add_sub_node(Complex(2, 2), Complex(5, 5));
+    complex_tree.add_sub_node(Complex(3, 3), Complex(6, 6));
+    complex_tree.add_sub_node(Complex(3, 3), Complex(7, 7));
+    complex_tree.add_sub_node(Complex(4, 4), Complex(8, 8));
+    complex_tree.add_sub_node(Complex(6, 6), Complex(9, 9));
+    complex_tree.add_sub_node(Complex(1, 1), Complex(10, 10));
+    complex_tree.add_sub_node(Complex(1, 1), Complex(11, 11));
+    
+
+    cout << complex_tree;
 
     return 0;
 }
